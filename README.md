@@ -1,35 +1,19 @@
-# JARVIS Web
+# Meu JARVIS Web
 
-Sou Gilberto Correa, estudante de ADS na FATEC. Neste projeto de
-Desenvolvimento Mobile, apresento uma SPA inspirada no JARVIS.
-Uso React, Vite, JavaScript/JSX, React Router e CSS/Flexbox para atender à Avaliação 1.
+Sou Gilberto Correa, estudante de ADS na FATEC. Neste projeto acadêmico,
+uso React com Vite para montar um assistente com texto, voz, respostas faladas
+e histórico. Mantenho o código em componentes simples, sem backend grande.
 
-## Funcionalidades
+## Como executo
 
-- Console local: `oi`, `olá`, `hora`, `data` e `ajuda`.
-- Catálogo com seis comandos carregados de JSON.
-- Cards reutilizáveis com props, `.map()` e `key`.
-- Favoritar/desfavoritar e contador controlados por `useState` e `onClick`.
-- Rotas `/` (Home) e `/comandos` (catálogo), com navegação sem recarregar.
-- Botão Voltar; no acesso direto ao catálogo, retorna à Home.
-- Layout responsivo com Flexbox.
-
-Guardo os favoritos no estado da página: eles são reiniciados quando saio do
-catálogo ou recarrego a página. No console, uso regras locais, sem API ou voz.
-
-## Executar
-
-Para executar meu projeto, preciso de Node.js compatível com o Vite e npm.
-Na pasta do projeto, uso os comandos abaixo:
-Ambiente usado na verificação: Node.js 26.8.1 e npm 12.0.2.
+Na pasta `jarvis-web`, uso:
 
 ```bash
-npm ci
+npm install
 npm run dev
 ```
 
-Abro no navegador o endereço informado pelo Vite.
-Para conferir o código, gerar a versão de produção e visualizá-la, uso:
+Abro o endereço informado pelo Vite. Para conferir o código e gerar a versão final:
 
 ```bash
 npm run lint
@@ -37,63 +21,124 @@ npm run build
 npm run preview
 ```
 
-Encontro os arquivos da versão de produção em `dist/`.
+Com `npm run dev`, testo interface, comandos locais, voz e histórico. O Vite
+sozinho não executa `api/chat.js`: para testar a função localmente, uso
+`npx vercel dev` em vez de iniciar outro Vite. Para testar a IA com a chave
+mantida apenas na Vercel, uso o endereço publicado após configurar a variável.
 
-## Organização
+## Como envio um comando
 
-- `src/main.jsx`: BrowserRouter e inicialização do React.
-- `src/App.jsx`: Header, Footer e definição das duas rotas.
-- `src/pages/HomePage.jsx`: apresentação e console.
-- `src/pages/CommandsPage.jsx`: dados, favoritos e renderização dos cards.
-- `src/components/`: Header, Footer, BackButton, CommandCard e JarvisConsole.
-- `src/data/commands.json`: lista de comandos.
-- `src/index.css` e `src/App.css`: estilos base e layout.
-- `vercel.json`: reescrita para abrir diretamente as rotas da SPA.
+1. Digito no campo ou clico em MIC e falo.
+2. Em `executarComando`, retiro espaços, normalizo o texto e procuro uma frase em `commands.js`.
+3. Se encontro um comando local, monto a resposta com `if/else`.
+4. Se não encontro, envio `{ message }` por POST para `/api/chat`.
+5. Mostro a resposta na tela, solicito a leitura e adiciono um registro ao histórico.
 
-## Conferência da avaliação
+Reconheço `oi`, `olá`, `ajuda`, `hora`, `data`, `que horas são?`,
+`que dia é hoje?` e `limpar histórico`. Comparo frases completas para não tratar
+uma pergunta como “O que é banco de dados?” como um pedido de data.
 
-| Requisito | Onde conferir |
+## Como uso a voz
+
+Em `ouvir`, uso `window.SpeechRecognition || window.webkitSpeechRecognition`
+e configuro o idioma como `pt-BR`. No evento `onresult`, coloco o texto no campo
+e chamo a mesma função dos comandos digitados. Mostro uma mensagem quando o
+navegador não oferece reconhecimento ou quando a permissão é negada.
+
+Para falar, crio `SpeechSynthesisUtterance`, configuro `pt-BR` e chamo
+`speechSynthesis.speak`. Cancelo a fala anterior antes de uma nova interação.
+Os estados visuais são ONLINE, OUVINDO, PROCESSANDO e RESPONDENDO.
+
+Uso HTTPS na publicação ou localhost no desenvolvimento e permito o microfone.
+O suporte depende do navegador; o reconhecimento pode enviar áudio a um serviço
+externo e precisar de internet. A voz de saída depende das vozes disponíveis no dispositivo.
+
+## Como guardo o histórico
+
+Uso `useState` para uma lista com `id`, `command` e `response`. Em HistoryList,
+percorro essa lista com `.map()` e identifico cada item por `key={item.id}`.
+Guardo os últimos 50 registros no `localStorage`. Ao limpar, deixo a lista vazia,
+sem adicionar o próprio comando de limpeza. Se o armazenamento estiver bloqueado,
+mantenho os registros apenas enquanto a página estiver aberta.
+
+## Onde encontro cada conceito
+
+| Conceito | Onde uso |
 | --- | --- |
-| Componentização e reuso | `src/components/` |
-| Props, `.map()` e `key` | `CommandsPage.jsx` e `CommandCard.jsx` |
-| Estado e eventos | Favoritos e `JarvisConsole.jsx` |
-| Duas rotas e navegação | `App.jsx`, `main.jsx`, Header e BackButton |
-| CSS e Flexbox | `App.css`, incluindo adaptação para telas pequenas |
-| Documentação e publicação | Este README e `vercel.json`; publicação depende das contas |
+| useState | Comando, resposta, status, avisos e histórico em JarvisConsole; favoritos em CommandsPage |
+| Props e pai/filho | JarvisConsole envia status ao JarvisCore, dados e funções ao CommandInput e a lista ao HistoryList |
+| Array de objetos | Comandos locais em `commands.js` e catálogo em `commands.json` |
+| .map() e key | Atalhos do console, HistoryList e cards de CommandsPage |
+| onClick | Executar, MIC, atalhos, favoritos e Voltar |
+| Rotas | BrowserRouter em main.jsx; Routes e Route em App.jsx; Link no Header |
+| CSS e Flexbox | Layout, núcleo, botões, histórico e cards em App.css |
+| useEffect e useRef | Sincronizo o histórico e interrompo microfone, fala e consulta ao sair da página |
 
-## Verificações realizadas
+## Meus arquivos principais
 
-- Lint e build de produção concluídos sem erros.
-- Chrome automatizado: seis casos do console, navegação SPA, seis cards,
-  favoritos de 0 para 2 e depois 1, botão Voltar e acesso direto à rota.
-- Layout verificado nas larguras 320, 390 e 1280 pixels, sem transbordamento horizontal.
-- Nenhum erro no console do navegador durante os testes locais.
-- A reescrita em produção ainda precisa ser validada após o deploy na Vercel.
+- `src/components/JarvisConsole.jsx`: concentro o fluxo de texto, voz e IA.
+- `src/components/JarvisCore.jsx`: recebo o estado por props e mostro o núcleo.
+- `src/components/CommandInput.jsx`: mostro campo e botões; recebo as funções por props.
+- `src/components/HistoryList.jsx`: mostro os registros com `.map()`.
+- `src/data/commands.js`: defino frases e respostas locais.
+- `api/chat.js`: consulto o OpenRouter no servidor, sem expor a chave.
+- `src/pages/HomePage.jsx`: mostro o assistente na rota `/`.
+- `src/pages/AboutPage.jsx`: explico o projeto na rota `/about`.
+- `src/pages/CommandsPage.jsx`: preservo o catálogo e os favoritos em `/comandos`.
+- `src/App.css`: organizo o visual com círculos, brilho, animações e Flexbox.
+- `vercel.json`: permito abrir as rotas diretamente sem interceptar `/api/chat`.
 
-## Teste manual
+## Como configuro a IA na Vercel
 
-1. Na Home, executo `oi`, `hora`, `data`, `ajuda`, um comando desconhecido e um vazio.
-2. Clico em Ver comandos: a URL deve mudar para `/comandos` e mostrar seis cards.
-3. Favorito dois comandos e removo um: o contador deve mostrar 2 e depois 1.
-4. Clico em Voltar e confiro a Home.
-5. Abro `/comandos` diretamente e atualizo a página.
-6. Testo em larguras de celular e desktop e verifico se há rolagem horizontal.
-7. Confiro se o console do navegador está sem erros.
+1. No projeto da Vercel, abro **Settings → Environment Variables**.
+2. Adiciono `OPENROUTER_API_KEY` com a chave da minha conta OpenRouter.
+3. Seleciono os ambientes em que vou usar a IA, como Production e Preview.
+4. Opcionalmente, adiciono `OPENROUTER_MODEL` com o identificador de um modelo.
+   Sem essa variável, uso `openrouter/auto`, que seleciona um modelo automaticamente.
+5. Faço um novo deploy para aplicar as variáveis.
+6. Abro o site, envio uma pergunta geral e confiro a resposta e o histórico.
 
-## Publicação
+Nunca uso o prefixo `VITE_` na chave e não escrevo a chave nos arquivos ou no Git.
+A função lê `process.env.OPENROUTER_API_KEY` apenas no servidor. Uso créditos e
+limites da minha conta OpenRouter; o modo automático não garante uso gratuito.
+Posso definir um limite de crédito na chave para controlar o gasto do endpoint público.
 
-Repositório: https://github.com/gilbertocorrea-cmd/jarvis-web
+Em `api/chat.js`, valido o método POST e perguntas com até 2000 caracteres.
+Limito o tamanho da resposta e trato indisponibilidade, excesso de requisições,
+resposta vazia e demora. Envio apenas a pergunta atual: o histórico da tela
+não é enviado como contexto da conversa.
 
-Ainda preciso conectar minha conta da Vercel para concluir a publicação.
-Depois do deploy, incluo aqui o link de produção.
+## Como publico
 
-1. Mantenho o código no meu repositório público no GitHub.
-2. Na Vercel, importo o repositório e seleciono o framework **Vite**.
-3. Seleciono como Root Directory a pasta que contém `package.json`; neste repositório, é a raiz.
-4. Configuro Build Command como `npm run build` e Output Directory como `dist`.
-5. Faço o deploy e testo Home, favoritos, Voltar e atualização direta de `/comandos`.
-6. Entrego os links do repositório público e da aplicação publicada.
+Meu repositório é https://github.com/gilbertocorrea-cmd/jarvis-web.
+Mantenho neste repositório o código do assistente, incluindo voz, histórico e integração com IA.
 
-## Apresentação e estudo
+Na Vercel, importo o repositório, seleciono Vite e uso a raiz que contém
+`package.json`, `api/` e `vercel.json`. Configuro `npm run build` e saída `dist`.
+Publico o projeto completo, não apenas a pasta dist, para incluir a função.
 
-Organizo meu roteiro e a explicação dos conceitos em [APRESENTACAO.md](APRESENTACAO.md).
+## Como testo
+
+- Executo os comandos locais pelo campo, Enter e atalhos.
+- Uso MIC, permito acesso e falo “que horas são?”.
+- Nego a permissão e confiro a mensagem sem travar os comandos digitados.
+- Confiro a leitura da resposta com volume ativo.
+- Envio uma pergunta geral para testar a IA configurada.
+- Recarrego a página e confiro o histórico; depois uso “limpar histórico”.
+- Navego entre `/`, `/about` e `/comandos`, testo favoritos e Voltar.
+- Atualizo `/about` e `/comandos` diretamente no site publicado.
+- Confiro o layout no celular e com preferência por movimento reduzido.
+
+Os testes automatizados de voz usam eventos simulados; não substituem o teste
+com meu microfone e alto-falante. A IA real e o deploy dependem da chave e do acesso
+à Vercel. Não considero esses testes concluídos apenas porque a build passou.
+
+## Referências que consulto
+
+- [Reconhecimento de voz — MDN](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition)
+- [Síntese de voz — MDN](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis)
+- [OpenRouter](https://openrouter.ai/docs/quickstart)
+- [Variáveis da Vercel](https://vercel.com/docs/environment-variables)
+- [Vercel dev](https://vercel.com/docs/cli/dev)
+
+Meu roteiro de demonstração está em [APRESENTACAO.md](APRESENTACAO.md).

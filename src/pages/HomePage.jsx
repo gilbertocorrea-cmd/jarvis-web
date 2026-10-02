@@ -6,18 +6,17 @@ export default function HomePage() {
     <section className="page">
       <div className="hero">
         <div className="hero-text">
-          <span className="eyebrow">ASSISTENTE WEB</span>
-          <h1>JARVIS Interface</h1>
+          <span className="eyebrow">ASSISTENTE PESSOAL</span>
+          <h1>À sua disposição.</h1>
           <p>
-            Uma SPA inspirada no JARVIS para demonstrar componentes,
-            estado, eventos, rotas, props e renderização dinâmica.
+            Sua voz. Seu comando. Pergunte, explore ideias e acompanhe cada resposta do JARVIS.
           </p>
           <Link className="primary-button link-button" to="/comandos">
             Ver comandos
           </Link>
         </div>
-        <JarvisConsole />
       </div>
+      <JarvisConsole />
     </section>
   );
 }

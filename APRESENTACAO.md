@@ -1,32 +1,29 @@
 # Meu roteiro de apresentação
 
-1. Abro a Home e apresento: “Este é meu projeto JARVIS Web, uma SPA em React com Vite.”
-2. Digito `hora` e clico em Executar. Explico que o clique chama uma função que atualiza a resposta na tela.
-3. Clico em Ver comandos. Mostro que a URL muda para `/comandos` sem recarregar toda a aplicação.
-4. Abro `commands.json` para mostrar os dados e `CommandsPage.jsx` para explicar a criação dos cards.
-5. Favorito dois comandos e removo um. Mostro como o contador acompanha essas mudanças.
-6. Clico em Voltar e reduzo a largura da janela para demonstrar o layout no celular.
-7. Mostro meu repositório no GitHub e, após o deploy, o endereço na Vercel.
+1. Abro a Home e apresento meu assistente em React com Vite.
+2. Digito “oi” e clico em Executar: mostro a resposta, o núcleo e o histórico.
+3. Uso MIC e pergunto a hora. Explico que transformo fala em texto e reutilizo a mesma função.
+4. Mostro que o navegador fala a resposta com speechSynthesis.
+5. Se a chave estiver configurada, faço uma pergunta geral e explico o caminho `/api/chat` → OpenRouter.
+6. Recarrego a página para mostrar o histórico persistente e uso “limpar histórico”.
+7. Abro Comandos, favorito um card e mostro props, `.map()`, `key`, `useState` e `onClick`.
+8. Abro Sobre e uso Voltar. Mostro o layout em uma largura de celular.
+9. Finalizo com o GitHub e, depois da publicação, o endereço na Vercel.
 
-## Como explico meu código
+## Como explico as partes
 
-- **Componente:** uso uma função que retorna JSX para representar uma parte da tela, como Header.
-- **Props:** envio os dados de CommandsPage para CommandCard. Também envio a função que o botão chama.
-- **Estado:** guardo os IDs dos favoritos em `favoriteIds`. Quando atualizo esse estado, o React atualiza a interface.
-- **map:** percorro os comandos do JSON e retorno um CommandCard para cada objeto.
-- **key:** uso o ID de cada comando para o React identificar os itens da lista.
-- **onClick:** associo o clique do botão à função que executa a ação.
-- **BrowserRouter:** envolvo a aplicação para disponibilizar a navegação aos componentes.
-- **Routes/Route:** associo cada endereço à página correspondente.
-- **Link:** uso esse componente para navegar sem recarregar toda a página.
-- **Flexbox:** organizo os elementos em linhas ou colunas. Com a media query, adapto o layout às telas menores.
-- **vercel.json:** configuro a hospedagem para entregar a aplicação quando acesso `/comandos` diretamente.
+- Em `JarvisConsole`, guardo o texto, a resposta, o status e o histórico com `useState`.
+- Em `CommandInput`, recebo valores e funções do pai por props.
+- Em `JarvisCore`, recebo `status` e aplico classes CSS que mudam o visual.
+- Em `HistoryList`, uso `.map()` para transformar cada registro em um bloco na tela.
+- Em `commands.js`, reúno as frases que reconheço localmente.
+- Em `api/chat.js`, mantenho a chave no servidor e envio somente a pergunta atual ao OpenRouter.
+- Em `App.jsx`, associo cada rota à sua página. Em `main.jsx`, envolvo a aplicação com BrowserRouter.
 
-## Limites que preciso explicar
+## O que preciso lembrar
 
-Guardo os favoritos apenas no estado da página. Ao sair do catálogo ou recarregar,
-eles são reiniciados. No console, uso regras locais para responder aos comandos,
-sem serviço externo ou reconhecimento de voz.
-
-No catálogo, apresento comandos simulados. O botão de cada card controla os
-favoritos; ele não executa a ação descrita no card.
+Não preciso de IA para responder hora, data ou saudação. Perguntas gerais precisam
+de internet e da chave configurada. A IA pode errar. O reconhecimento de voz pode
+não estar disponível em todos os navegadores; o campo de texto continua utilizável.
+Guardo até 50 registros neste navegador. Os favoritos do catálogo ficam apenas no
+estado da página. Os cards do catálogo demonstram favoritos, não executam as ações simuladas.

@@ -10,6 +10,7 @@ export default function Header() {
       <nav className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/comandos">Comandos</Link>
+        <Link to="/about">Sobre</Link>
       </nav>
     </header>
   );

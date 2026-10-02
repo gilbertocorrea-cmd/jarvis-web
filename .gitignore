@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Mantenho chaves e configurações locais fora do Git.
+.env
+.env.*
+.vercel
