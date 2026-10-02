@@ -4,6 +4,8 @@
 
 SPA (aplicação de página única) desenvolvida em React com Vite para a P1 de Desenvolvimento Mobile, no curso de ADS da FATEC. Inspirado no assistente JARVIS, o projeto recebe comandos por texto ou voz e mostra as respostas na tela, com leitura em português brasileiro quando há uma voz compatível.
 
+O JARVIS possui comandos locais para ações como consultar hora, data, status e diagnóstico. Quando a pergunta não corresponde a um desses comandos, ela é enviada para uma Inteligência Artificial pela integração com OpenRouter. Assim, é possível fazer perguntas sobre programação, história, tecnologia e conhecimentos gerais. A resposta aparece na interface e também pode ser reproduzida pela voz do navegador.
+
 ## Aplicação online
 
 [Acessar o JARVIS Web na Vercel](https://jarvis-7wktg97tp-gil-testa.vercel.app/)
@@ -43,6 +45,25 @@ Os comandos estão em `src/data/commands.js` e `src/data/commands.json`.
 Também são aceitas variações cadastradas, como `como está o sistema`, `ativar defesa` e `analise essa missão`. Missão, defesa, banco de dados e sensores são simulações: não controlam equipamentos nem consultam um banco real.
 
 Textos que não correspondem a um comando local, como “O que é um banco de dados?”, seguem para a IA.
+
+## Inteligência Artificial
+
+A integração com OpenRouter permite ao JARVIS responder perguntas gerais. O fluxo é simples:
+
+```text
+Usuário faz uma pergunta
+→ JARVIS verifica os comandos locais
+→ Se não encontrar um comando correspondente, envia a pergunta para /api/chat
+→ O servidor consulta a IA pelo OpenRouter
+→ A resposta volta para o JARVIS
+→ É exibida na tela e pode ser falada pelo navegador
+```
+
+Exemplos de perguntas:
+
+- "Quem foi Alan Turing?"
+- "O que é uma API?"
+- "Explique Java de forma simples."
 
 ## Tecnologias utilizadas
 
