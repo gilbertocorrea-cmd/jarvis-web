@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "Status do sistema", "category": "Sistema", "description": "Exibe o estado atual do JARVIS." },
+  { "id": 2, "name": "Analisar missão", "category": "Análise", "description": "Simula uma análise rápida de missão." },
+  { "id": 3, "name": "Modo defesa", "category": "Sistema", "description": "Ativa uma simulação visual de defesa." },
+  { "id": 4, "name": "Diagnóstico", "category": "Manutenção", "description": "Executa um diagnóstico visual do sistema." },
+  { "id": 5, "name": "Banco de dados", "category": "Informação", "description": "Simula uma consulta ao banco de dados." },
+  { "id": 6, "name": "Rede de sensores", "category": "Monitoramento", "description": "Mostra uma simulação dos sensores conectados." }
+]
