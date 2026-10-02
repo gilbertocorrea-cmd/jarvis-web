@@ -3,7 +3,7 @@ import BackButton from '../components/BackButton';
 import CommandCard from '../components/CommandCard';
 import commands from '../data/commands.json';
 
-export default function CommandsPage() {
+export default function CommandsPage({ onExecute, busy }) {
   const [favoriteIds, setFavoriteIds] = useState([]);
 
   function toggleFavorite(id) {
@@ -36,6 +36,8 @@ export default function CommandsPage() {
             category={command.category}
             description={command.description}
             favorite={favoriteIds.includes(command.id)}
+            onExecute={() => onExecute(command.command)}
+            busy={busy}
             onToggleFavorite={() => toggleFavorite(command.id)}
           />
         ))}

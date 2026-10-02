@@ -1,8 +1,8 @@
-export default function JarvisCore({ status }) {
+export default function JarvisCore({ status, defense = false }) {
   // Desenho o rosto com linhas e pontos; o CSS reage ao estado recebido por props.
   const nodes = [[100,20],[68,30],[132,30],[48,61],[152,61],[43,95],[157,95],[60,121],[140,121],[78,151],[122,151],[100,168],[100,75],[100,111],[72,87],[128,87]];
   return (
-    <div className={`core-display state-${status.toLowerCase()}`}>
+    <div className={`core-display state-${status.toLowerCase()}${defense ? ' defense-active' : ''}`}>
       <div className="hologram-stage" aria-hidden="true">
         <div className="hud-side hud-left">
           <span>NEURAL LINK</span><i /><i /><i />
@@ -35,6 +35,7 @@ export default function JarvisCore({ status }) {
           <span>PT / BR</span><i /><i />
         </div>
       </div>
+      {defense && <p className="defense-label">DEFESA SIMULADA ATIVA</p>}
       <p className="core-status" role="status"><span />{status}</p>
     </div>
   );

@@ -597,6 +597,13 @@ button:focus-visible, a:focus-visible {
   .hologram-stage { gap: 0; }
   .mic-button { white-space: nowrap; }
 }
+.card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.card-actions button { flex: 1; }
+.defense-active { --core-color: #ff9c62; }
+.defense-active .core-ring-outer { animation-duration: 2s; }
+.defense-active .face-eyes { animation: hologram-glow .5s ease-in-out infinite; }
+.defense-label { color: #ffbc90; font-size: .7rem; letter-spacing: 2px; margin: 15px 0 0; }
+.assistant-workspace { scroll-margin-top: 20px; margin-bottom: 30px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;

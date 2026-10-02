@@ -1,8 +1,79 @@
 [
-  { "id": 1, "name": "Status do sistema", "category": "Sistema", "description": "Exibe o estado atual do JARVIS." },
-  { "id": 2, "name": "Analisar missão", "category": "Análise", "description": "Simula uma análise rápida de missão." },
-  { "id": 3, "name": "Modo defesa", "category": "Sistema", "description": "Ativa uma simulação visual de defesa." },
-  { "id": 4, "name": "Diagnóstico", "category": "Manutenção", "description": "Executa um diagnóstico visual do sistema." },
-  { "id": 5, "name": "Banco de dados", "category": "Informação", "description": "Simula uma consulta ao banco de dados." },
-  { "id": 6, "name": "Rede de sensores", "category": "Monitoramento", "description": "Mostra uma simulação dos sensores conectados." }
+  {
+    "id": 1,
+    "name": "Status do sistema",
+    "category": "Sistema",
+    "description": "Exibe o estado atual do JARVIS.",
+    "command": "status do sistema",
+    "keywords": [
+      "status",
+      "status do sistema",
+      "como esta o sistema"
+    ],
+    "response": "Interface e núcleo de comandos operacionais. O reconhecimento de voz depende do navegador e da permissão do microfone."
+  },
+  {
+    "id": 2,
+    "name": "Analisar missão",
+    "category": "Análise",
+    "description": "Simula uma análise rápida de missão.",
+    "command": "analisar missão",
+    "keywords": [
+      "analisar missao",
+      "analise essa missao",
+      "analise a missao",
+      "analisar essa missao"
+    ],
+    "response": "Análise simulada iniciada. Avaliando prioridade, recursos disponíveis e possíveis riscos da missão."
+  },
+  {
+    "id": 3,
+    "name": "Modo defesa",
+    "category": "Sistema",
+    "description": "Ativa uma simulação visual de defesa.",
+    "command": "modo defesa",
+    "keywords": [
+      "modo defesa",
+      "ativar defesa",
+      "ativar modo defesa",
+      "ative defesa",
+      "ative o modo defesa"
+    ],
+    "response": "Modo defesa ativado. Monitoramento ampliado e protocolos defensivos simulados em execução."
+  },
+  {
+    "id": 4,
+    "name": "Diagnóstico",
+    "category": "Manutenção",
+    "description": "Executa um diagnóstico visual do sistema.",
+    "command": "diagnóstico",
+    "keywords": [
+      "diagnostico"
+    ],
+    "response": "Executando diagnóstico local. Interface operacional e núcleo de comandos respondendo normalmente."
+  },
+  {
+    "id": 5,
+    "name": "Banco de dados",
+    "category": "Informação",
+    "description": "Simula uma consulta ao banco de dados.",
+    "command": "banco de dados",
+    "keywords": [
+      "banco de dados",
+      "consultar banco de dados"
+    ],
+    "response": "Consultando banco de dados simulado. Nenhuma anomalia encontrada."
+  },
+  {
+    "id": 6,
+    "name": "Rede de sensores",
+    "category": "Monitoramento",
+    "description": "Mostra uma simulação dos sensores conectados.",
+    "command": "rede de sensores",
+    "keywords": [
+      "rede de sensores",
+      "sensores"
+    ],
+    "response": "Rede de sensores simulada online. Todos os nós virtuais estão respondendo."
+  }
 ]

@@ -28,15 +28,29 @@ mantida apenas na Vercel, uso o endereço publicado após configurar a variável
 
 ## Como envio um comando
 
-1. Digito no campo ou clico em MIC e falo.
+1. Digito no campo, clico em MIC e falo ou uso Executar em um card.
 2. Em `executarComando`, retiro espaços, normalizo o texto e procuro uma frase em `commands.js`.
 3. Se encontro um comando local, monto a resposta com `if/else`.
 4. Se não encontro, envio `{ message }` por POST para `/api/chat`.
 5. Mostro a resposta na tela, solicito a leitura e adiciono um registro ao histórico.
 
-Reconheço `oi`, `olá`, `ajuda`, `hora`, `data`, `que horas são?`,
-`que dia é hoje?` e `limpar histórico`. Comparo frases completas para não tratar
-uma pergunta como “O que é banco de dados?” como um pedido de data.
+Reconheço saudação, ajuda, hora e data reais, limpar histórico, status do sistema,
+analisar missão, modo defesa, diagnóstico, banco de dados e rede de sensores.
+Aceito variações como “fazer diagnóstico”, “execute diagnóstico”, “Jarvis diagnóstico”,
+“como está o sistema”, “ativar defesa” e “analise essa missão”. Retiro formas simples
+de pedir a ação e comparo as frases reconhecidas, sem capturar perguntas gerais
+como “O que é um banco de dados?”. Essas perguntas seguem para a IA.
+
+Nos cards, uso `command` para informar qual texto executar. Passo `onExecute`
+por props de JarvisConsole para CommandsPage e CommandCard. Assim, texto, voz e
+cards usam a mesma função, a mesma fala pt-BR e o mesmo histórico. O botão
+Favoritar altera somente o estado dos favoritos. Após executar um card, mostro
+o console para acompanhar a resposta.
+
+No modo defesa, ativo uma animação laranja por cinco segundos. Missão, defesa,
+banco de dados e sensores são simulações locais; não controlo dispositivos reais.
+No status e diagnóstico, verifico a disponibilidade das APIs de voz e de uma voz brasileira.
+Também registro no histórico falhas de consulta à IA para deixar a interação visível.
 
 ## Como uso a voz e o microfone contínuo
 
@@ -114,7 +128,7 @@ mantenho os registros apenas enquanto a página estiver aberta.
 - `api/chat.js`: consulto o OpenRouter no servidor, sem expor a chave.
 - `src/pages/HomePage.jsx`: mostro o assistente na rota `/`.
 - `src/pages/AboutPage.jsx`: explico o projeto na rota `/about`.
-- `src/pages/CommandsPage.jsx`: preservo o catálogo e os favoritos em `/comandos`.
+- `src/pages/CommandsPage.jsx`: mostro os cards com Executar e Favoritar, recebendo a função do console por props.
 - `src/App.css`: organizo o visual com círculos, brilho, animações e Flexbox.
 - `vercel.json`: permito abrir as rotas diretamente sem interceptar `/api/chat`.
 

@@ -3,13 +3,17 @@ import { commands } from '../data/commands';
 import JarvisCore from './JarvisCore';
 import CommandInput from './CommandInput';
 import HistoryList from './HistoryList';
+import CommandsPage from '../pages/CommandsPage';
 
-export default function JarvisConsole() {
+export default function JarvisConsole({ showCommands = false }) {
   const [command, setCommand] = useState('');
   const [response, setResponse] = useState('Sistema online. Como posso ajudar?');
   const [status, setStatus] = useState('ONLINE');
   const [notice, setNotice] = useState('');
   const [listening, setListening] = useState(false);
+  const [defense, setDefense] = useState(false);
+  const defenseTimerRef = useRef(null);
+  const consoleRef = useRef(null);
   const [history, setHistory] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('jarvis-history') || '[]');
@@ -49,6 +53,7 @@ export default function JarvisConsole() {
     synth?.addEventListener('voiceschanged', carregarVozes);
     return () => {
       shouldListenRef.current = false;
+      clearTimeout(defenseTimerRef.current);
       clearTimeout(restartTimerRef.current);
       synth?.removeEventListener('voiceschanged', carregarVozes);
       if (recognitionRef.current) {
@@ -170,9 +175,12 @@ export default function JarvisConsole() {
     setCommand(texto);
     setNotice('');
     setStatus('PROCESSANDO');
-    // Normalizo acentos e pontuação para comparar frases completas.
+    // Retiro formas de pedir a mesma ação, preservando o restante da pergunta.
     const normalizado = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[?!.,]/g, '').replace(/\s+/g, ' ').trim();
-    const local = commands.find((item) => item.keywords.includes(normalizado));
+    const pedido = normalizado.replace(/^jarvis\s+/, '')
+      .replace(/^(por favor\s+)?(fazer|faca|execute|executar|mostre|mostrar|verifique|verificar)\s+(um\s+|o\s+)?/, '')
+      .replace(/\s+por favor$/, '').trim();
+    const local = commands.find((item) => item.keywords.includes(pedido));
     let resposta;
     try {
       if (local?.id === 3) {
@@ -184,6 +192,16 @@ export default function JarvisConsole() {
         setHistory([]);
       } else if (local) {
         resposta = local.response;
+        if (local.id === 8) {
+          setDefense(true);
+          clearTimeout(defenseTimerRef.current);
+          defenseTimerRef.current = setTimeout(() => setDefense(false), 5000);
+        }
+        if (local.id === 6 || local.id === 9) {
+          const reconhecimento = window.SpeechRecognition || window.webkitSpeechRecognition;
+          resposta += reconhecimento ? ' Reconhecimento de voz compatível; o uso exige permissão.' : ' Reconhecimento de voz indisponível neste navegador.';
+          resposta += window.speechSynthesis && getJarvisVoice() ? ' Voz brasileira disponível.' : ' Voz brasileira indisponível; mantenho as respostas na tela.';
+        }
       } else {
         const controller = new AbortController();
         requestRef.current = controller;
@@ -213,8 +231,10 @@ export default function JarvisConsole() {
       }
       falar(resposta);
     } catch (error) {
-      setResponse(error.name === 'AbortError' ? 'A consulta demorou demais. Tente novamente.' : error.message);
-      setStatus('ONLINE');
+      resposta = error.name === 'AbortError' ? 'A consulta demorou demais. Tente novamente.' : error.message;
+      setResponse(resposta);
+      setHistory((items) => [{ id: crypto.randomUUID(), command: texto, response: resposta }, ...items].slice(0, 50));
+      falar(resposta);
     } finally {
       busyRef.current = false;
       retomarEscuta();
@@ -293,10 +313,15 @@ export default function JarvisConsole() {
 
   const busy = status === 'PROCESSANDO' || status === 'RESPONDENDO';
   return (
-    <div className="assistant-workspace">
+    <>
+      {showCommands && <CommandsPage busy={busy} onExecute={(texto) => {
+        executarComando(texto);
+        consoleRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      }} />}
+    <div className="assistant-workspace" ref={consoleRef}>
       <section className="console-panel" aria-label="Console JARVIS">
         <div className="section-heading"><span className="eyebrow">INTERFACE NEURAL</span><span className="system-label">JARVIS / 01</span></div>
-        <JarvisCore status={status} />
+        <JarvisCore status={status} defense={defense} />
         <p className="console-response" aria-live="polite">{response}</p>
         <CommandInput command={command} onChange={setCommand} onExecute={executarComando} onMicrophone={ouvir} busy={busy} listening={listening} status={status} />
         {notice && <p className="console-notice" role="status">{notice}</p>}
@@ -306,5 +331,6 @@ export default function JarvisConsole() {
       </section>
       <HistoryList history={history} />
     </div>
+    </>
   );
 }

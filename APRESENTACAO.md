@@ -6,7 +6,7 @@
 4. Mostro a resposta falada e explico que pauso a escuta durante a fala para evitar eco. Desligo o MIC pelo mesmo botão.
 5. Se a chave estiver configurada, faço uma pergunta geral e explico o caminho `/api/chat` → OpenRouter.
 6. Recarrego a página para mostrar o histórico persistente e uso “limpar histórico”.
-7. Abro Comandos, favorito um card e mostro props, `.map()`, `key`, `useState` e `onClick`.
+7. Abro Comandos, executo Diagnóstico e Modo defesa e mostro as respostas no histórico. Favorito um card para demonstrar a ação independente.
 8. Abro Sobre e uso Voltar. Mostro o layout em uma largura de celular.
 9. Finalizo com o GitHub e, depois da publicação, o endereço na Vercel.
 
@@ -27,4 +27,4 @@ Não preciso de IA para responder hora, data ou saudação. Perguntas gerais pre
 de internet e da chave configurada. A IA pode errar. O reconhecimento de voz pode
 não estar disponível em todos os navegadores; o campo de texto continua utilizável.
 Guardo até 50 registros neste navegador. Os favoritos do catálogo ficam apenas no
-estado da página. Os cards do catálogo demonstram favoritos, não executam as ações simuladas.
+estado da página. Os cards executam comandos pelo mesmo console; missão, defesa, banco de dados e sensores são simulações locais.

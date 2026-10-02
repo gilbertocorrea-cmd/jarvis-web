@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: process.env.OPENROUTER_MODEL || 'openrouter/auto',
         messages: [
-          { role: 'system', content: 'Você é JARVIS, um assistente educacional. Responda em português brasileiro, de forma clara e curta. Não finja executar ações fora desta conversa.' },
+          { role: 'system', content: 'Você é JARVIS, um assistente virtual futurista e educacional. Responda sempre em português do Brasil. Seja objetivo, inteligente e educado, com linguagem natural. Evite respostas exageradamente longas. Não invente informações quando não souber e não finja executar ações fora desta conversa.' },
           { role: 'user', content: message.trim() },
         ],
         max_tokens: 500,
