@@ -1,12 +1,7 @@
 <div align="center">
-
-<img src="./docs/jarvis-banner.png" width="100%" alt="JARVIS Web">
-
-# J A R V I S　W E B
-
-### `ARTIFICIAL INTELLIGENCE • VOICE ASSISTANT • SYSTEM ONLINE`
-
+  <img src="./docs/jarvis-banner.png" width="100%" alt="JARVIS Web">
 </div>
+
 <div align="center">
 
 # J A R V I S　W E B
@@ -15,15 +10,11 @@
 
 **Assistente virtual com voz, comandos locais e Inteligência Artificial**
 
-<br>
-
 [![React](https://img.shields.io/badge/REACT-19-00D8FF?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/VITE-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
 ![JavaScript](https://img.shields.io/badge/JAVASCRIPT-ES6+-111827?style=for-the-badge&logo=javascript&logoColor=00D8FF)
 [![Vercel](https://img.shields.io/badge/VERCEL-ONLINE-111827?style=for-the-badge&logo=vercel&logoColor=white)](https://jarvis-7wktg97tp-gil-testa.vercel.app/)
 ![OpenRouter](https://img.shields.io/badge/AI-OPENROUTER-00BFFF?style=for-the-badge)
-
-<br>
 
 ### [ ◉ ACESSAR JARVIS ONLINE ](https://jarvis-7wktg97tp-gil-testa.vercel.app/)
 
@@ -33,11 +24,9 @@
 
 ## `JARVIS // VISÃO GERAL`
 
-O **JARVIS Web** é uma SPA desenvolvida com **React + Vite** para a P1 de Desenvolvimento Mobile do curso de **Análise e Desenvolvimento de Sistemas da FATEC**.
+SPA (aplicação de página única) desenvolvida em React com Vite para a P1 de Desenvolvimento Mobile, no curso de ADS da FATEC. Inspirado no assistente JARVIS, o projeto recebe comandos por texto ou voz e mostra as respostas na tela, com leitura em português brasileiro quando há uma voz compatível.
 
-Inspirado no conceito de um assistente virtual futurista, o sistema combina **comandos locais, reconhecimento de voz, respostas faladas e Inteligência Artificial** em uma interface interativa.
-
-O JARVIS consegue executar comandos diretamente no navegador, como informar **hora, data, status e diagnóstico**. Quando recebe uma pergunta que não corresponde a um comando local, utiliza **Inteligência Artificial através do OpenRouter** para gerar a resposta.
+O JARVIS possui comandos locais para ações como consultar hora, data, status e diagnóstico. Quando a pergunta não corresponde a um desses comandos, ela é enviada para uma Inteligência Artificial pela integração com OpenRouter. Assim, é possível fazer perguntas sobre programação, história, tecnologia e conhecimentos gerais. A resposta aparece na interface e também pode ser reproduzida pela voz do navegador.
 
 ---
 
@@ -59,27 +48,23 @@ O JARVIS consegue executar comandos diretamente no navegador, como informar **ho
 
 ## `JARVIS // FUNCIONALIDADES`
 
-| Sistema | Função |
-| --- | --- |
-| `COMMAND CORE` | Executa comandos locais cadastrados no sistema |
-| `ARTIFICIAL INTELLIGENCE` | Responde perguntas gerais através do OpenRouter |
-| `VOICE INPUT` | Reconhece comandos falados em português brasileiro |
-| `VOICE OUTPUT` | Reproduz as respostas usando síntese de voz |
-| `COMMAND CARDS` | Permite executar comandos diretamente pelos cards |
-| `FAVORITES` | Permite marcar comandos favoritos durante a sessão |
-| `HISTORY` | Mantém os últimos 50 registros no `localStorage` |
-| `SPA ROUTER` | Navegação entre Início, Comandos e Sobre |
-| `JARVIS CORE` | Núcleo visual animado conforme o estado do sistema |
+- Comandos digitados, enviados pelo botão Executar ou pela tecla Enter.
+- Reconhecimento de voz em português brasileiro, conforme o suporte do navegador e a permissão do microfone.
+- Respostas faladas quando o dispositivo oferece uma voz `pt-BR`.
+- Comandos locais disponíveis no campo de texto, nos atalhos e nos cards.
+- Cards com botões Executar e Favoritar. Os favoritos ficam no estado da página e não são salvos após sair dela.
+- Histórico dos últimos 50 registros salvo no `localStorage` do navegador. Se o armazenamento estiver bloqueado, os registros ficam apenas no estado da aplicação.
+- Perguntas gerais respondidas pela IA através do OpenRouter.
+- Núcleo animado em SVG e CSS, com estados de escuta, processamento e resposta.
+- Navegação entre Início (`/`), Comandos (`/comandos`) e Sobre (`/about`), com botão Voltar.
 
-O microfone pausa enquanto o JARVIS fala para evitar que o sistema reconheça a própria resposta como um novo comando.
+O microfone pausa durante a resposta falada para evitar que o JARVIS escute a própria voz. A escuta é retomada enquanto o microfone estiver ligado; falhas de permissão, rede ou encerramentos repetidos podem desligá-la. Sem uma voz brasileira disponível, a resposta continua na tela.
 
 ---
 
 ## `AI CORE // INTELIGÊNCIA ARTIFICIAL`
 
-O JARVIS possui dois caminhos para processar uma entrada.
-
-**Comandos conhecidos** são executados diretamente no navegador. **Perguntas gerais** são encaminhadas para a Inteligência Artificial.
+A integração com OpenRouter permite ao JARVIS responder perguntas gerais. O fluxo é simples:
 
 ```text
                     ┌──────────────────┐
@@ -115,54 +100,35 @@ O JARVIS possui dois caminhos para processar uma entrada.
                                     TELA          VOZ
 ```
 
-### Exemplos
+Exemplos de perguntas:
 
-```text
-> Quem foi Alan Turing?
-
-> O que é uma API?
-
-> Explique Java de forma simples.
-```
-
-A aplicação envia apenas a pergunta atual para `/api/chat`. O servidor consulta o OpenRouter e devolve a resposta ao JARVIS.
+- "Quem foi Alan Turing?"
+- "O que é uma API?"
+- "Explique Java de forma simples."
 
 ---
 
 ## `COMMAND CORE // COMANDOS LOCAIS`
 
-Os comandos são definidos em:
+Os comandos estão em `src/data/commands.js` e `src/data/commands.json`.
 
-```text
-src/data/commands.js
-src/data/commands.json
-```
-
-| Comando | Ação |
+| Comando ou exemplo | Resultado |
 | --- | --- |
-| `Olá` / `oi` | Responde à saudação |
-| `Ajuda` / `comandos` | Mostra as opções locais |
-| `Que horas são?` | Informa a hora do dispositivo |
-| `Que dia é hoje?` | Informa a data do dispositivo |
-| `Limpar histórico` | Remove os registros do histórico |
-| `Status do sistema` | Verifica o estado dos principais recursos |
-| `Analisar missão` | Executa uma análise simulada |
-| `Modo defesa` | Ativa uma animação de defesa por cinco segundos |
-| `Diagnóstico` | Executa o diagnóstico local |
-| `Banco de dados` | Executa uma consulta simulada |
-| `Rede de sensores` | Exibe uma resposta simulada dos sensores |
+| `Olá` ou `oi` | Responde à saudação. |
+| `Ajuda` ou `comandos` | Lista as opções locais. |
+| `Que horas são?` | Informa a hora do dispositivo. |
+| `Que dia é hoje?` | Informa a data do dispositivo. |
+| `Limpar histórico` | Apaga os registros do histórico. |
+| `Status do sistema` | Mostra uma resposta local e verifica a disponibilidade das APIs de voz. |
+| `Analisar missão` | Mostra uma análise simulada. |
+| `Modo defesa` | Ativa uma animação de defesa por cinco segundos. |
+| `Diagnóstico` | Mostra o diagnóstico local e a disponibilidade da voz. |
+| `Banco de dados` | Mostra uma consulta simulada. |
+| `Rede de sensores` | Mostra uma resposta simulada dos sensores. |
 
-Também são reconhecidas variações cadastradas, como:
+Também são aceitas variações cadastradas, como `como está o sistema`, `ativar defesa` e `analise essa missão`. Missão, defesa, banco de dados e sensores são simulações: não controlam equipamentos nem consultam um banco real.
 
-```text
-como está o sistema
-ativar defesa
-analise essa missão
-```
-
-> **SIMULATION NOTICE:** missão, modo defesa, banco de dados e rede de sensores são simulações visuais e textuais. O sistema não controla equipamentos externos nem consulta um banco de dados real.
-
-Perguntas que não correspondem aos comandos locais seguem automaticamente para a **IA**.
+Textos que não correspondem a um comando local, como “O que é um banco de dados?”, seguem para a IA.
 
 ---
 
@@ -184,21 +150,20 @@ Perguntas que não correspondem aos comandos locais seguem automaticamente para 
 
 ## `P1 // REQUISITOS ATENDIDOS`
 
-| Requisito | Implementação |
+| Requisito | Onde aparece |
 | --- | --- |
-| **React + Vite** | `package.json`, `vite.config.js` e `src/main.jsx` |
-| **Componentização** | `CommandCard`, `CommandInput`, `HistoryList`, `BackButton` e outros componentes |
-| **Props** | Comunicação entre `JarvisConsole` → `CommandInput` e `CommandsPage` → `CommandCard` |
-| **`.map()` + `key`** | Cards, histórico e atalhos de comandos |
-| **`useState`** | Console, histórico, favoritos e estados da interface |
-| **`onClick`** | Botões de comando, cards, favoritos e navegação |
-| **SPA** | `BrowserRouter`, `Routes` e `Route` |
-| **3 rotas** | `/`, `/comandos` e `/about` |
-| **Botão Voltar** | Componente reutilizável `BackButton` |
-| **CSS / Flexbox** | `App.css` e `index.css` |
-| **Dados estruturados** | `commands.js` e `commands.json` |
-| **GitHub** | Repositório público e versionado |
-| **Vercel** | Aplicação publicada em produção |
+| React com Vite | `package.json`, `vite.config.js` e `src/main.jsx`. |
+| Componentização | Componentes como `CommandCard`, `CommandInput`, `HistoryList` e `BackButton`. |
+| Props | `JarvisConsole` passa dados e funções para `CommandInput`; `CommandsPage` passa os dados de cada card para `CommandCard`. |
+| `.map()` e `key` | Cards em `CommandsPage`, registros em `HistoryList` e atalhos em `JarvisConsole`. |
+| `useState` | Texto, resposta e histórico em `JarvisConsole`; favoritos em `CommandsPage`. |
+| `onClick` | Botões em `CommandInput`, `CommandCard` e `BackButton`. |
+| Pelo menos duas rotas SPA | `BrowserRouter` em `main.jsx` e três rotas em `App.jsx`: `/`, `/comandos` e `/about`. |
+| Botão Voltar | `BackButton` usa `useNavigate` para voltar ou abrir o início quando não há uma página anterior na navegação. |
+| CSS e Flexbox | Estilos em `src/App.css` e `src/index.css`. |
+| Dados estruturados | Lista de objetos em `commands.js` e catálogo em `commands.json`. |
+| GitHub | Repositório: [gilbertocorrea-cmd/jarvis-web](https://github.com/gilbertocorrea-cmd/jarvis-web). |
+| Vercel | Aplicação publicada no link acima, com função `api/chat.js` e rotas configuradas em `vercel.json`. |
 
 ---
 
@@ -206,96 +171,65 @@ Perguntas que não correspondem aos comandos locais seguem automaticamente para 
 
 ```text
 jarvis-web/
-│
-├── api/
-│   └── chat.js                 # Comunicação com a IA
-│
-├── public/
-│   └── favicon.svg
-│
+├── api/chat.js              # Consulta à IA no servidor
+├── docs/jarvis-banner.png   # Banner da documentação
+├── public/favicon.svg
 ├── src/
-│   ├── components/             # Componentes reutilizáveis
-│   ├── data/                   # Comandos do JARVIS
-│   ├── pages/                  # Páginas da aplicação
-│   │
-│   ├── App.jsx                 # Rotas
-│   ├── App.css                 # Interface
-│   ├── index.css               # Estilos globais
-│   └── main.jsx                # Inicialização React
-│
-├── APRESENTACAO.md
-├── README.md
+│   ├── components/          # Console, núcleo, cards, histórico e botões
+│   ├── data/                # Comandos locais e catálogo dos cards
+│   ├── pages/               # HomePage, CommandsPage e AboutPage
+│   ├── App.jsx              # Rotas da aplicação
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx             # Inicialização do React e BrowserRouter
 ├── index.html
 ├── package.json
+├── vite.config.js
 ├── vercel.json
-└── vite.config.js
+├── README.md
+└── APRESENTACAO.md          # Roteiro para a apresentação oral
 ```
 
 ---
 
 ## `BOOT SEQUENCE // EXECUÇÃO LOCAL`
 
-Clone o projeto:
+Com Node.js e npm instalados:
 
 ```bash
 git clone https://github.com/gilbertocorrea-cmd/jarvis-web.git
-```
-
-Entre no diretório:
-
-```bash
 cd jarvis-web
-```
-
-Instale as dependências:
-
-```bash
 npm install
-```
-
-Inicie o ambiente de desenvolvimento:
-
-```bash
 npm run dev
 ```
 
-### Verificação
+Abra o endereço informado no terminal. O Vite permite testar a interface, os comandos locais, o histórico e os recursos de voz disponíveis no navegador. Ele não executa sozinho a função `/api/chat`.
+
+Para verificar o código e gerar os arquivos de produção:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-Para testar também a função serverless da IA localmente:
-
-```bash
-npx vercel dev
-```
+`npm run preview` permite visualizar a versão gerada da interface. Para testar também a função da IA localmente, use `npx vercel dev`, com o projeto e as variáveis de ambiente configurados.
 
 ---
 
 ## `AI CONFIG // CONFIGURAÇÃO`
 
-A integração com IA é executada no servidor através de:
+A chave é lida no servidor por `api/chat.js` e não deve ficar no código nem receber o prefixo `VITE_`. Os arquivos `.env` e `.env.*` estão no `.gitignore`.
 
-```text
-api/chat.js
-```
+Nas variáveis de ambiente do projeto na Vercel, configure:
 
-As credenciais **não ficam armazenadas no código-fonte**.
+| Variável | Uso |
+| --- | --- |
+| `OPENROUTER_API_KEY` | Chave da conta OpenRouter, necessária para consultar a IA. |
+| `OPENROUTER_MODEL` | Identificador opcional do modelo. Quando não informado, o código usa `openrouter/auto`. |
 
-Na Vercel são utilizadas as variáveis:
+Após configurar as variáveis, faça uma nova publicação para aplicá-las. O uso da IA depende da disponibilidade do modelo e dos créditos da conta.
 
-```env
-OPENROUTER_API_KEY=<sua-chave>
-OPENROUTER_MODEL=<modelo-opcional>
-```
-
-`OPENROUTER_API_KEY` permite que `/api/chat` consulte o OpenRouter.
-
-`OPENROUTER_MODEL` é opcional. Quando não informado, a aplicação utiliza o modelo definido como padrão pelo projeto.
-
-> **SECURITY:** a chave da API nunca deve ser adicionada ao GitHub ou receber prefixo `VITE_`.
+O console envia a pergunta atual por `POST /api/chat`. A função valida o texto (até 2000 caracteres), consulta o OpenRouter e devolve a resposta. O histórico exibido na tela não é enviado como contexto. Erros de consulta também aparecem no histórico; os comandos locais continuam disponíveis sem a chave.
 
 ---
 
@@ -318,13 +252,13 @@ Vercel
 JARVIS ONLINE
 ```
 
-### Produção
+O projeto está publicado na Vercel. Para configurar a publicação, importe o repositório e use a pasta que contém `package.json`, `api/` e `vercel.json` como raiz. O comando de geração é `npm run build`, com saída em `dist`.
 
-**[jarvis-7wktg97tp-gil-testa.vercel.app](https://jarvis-7wktg97tp-gil-testa.vercel.app/)**
+A publicação deve incluir a função `api/chat.js`. O arquivo `vercel.json` direciona `/about` e `/comandos` para a aplicação, permitindo abrir essas páginas diretamente.
 
-### Repositório
+Antes da entrega, teste a IA, a navegação direta pelas rotas e o microfone no site. A voz depende do navegador, de HTTPS ou localhost e das permissões do dispositivo; o reconhecimento pode precisar de internet.
 
-**[github.com/gilbertocorrea-cmd/jarvis-web](https://github.com/gilbertocorrea-cmd/jarvis-web)**
+O [roteiro de apresentação](APRESENTACAO.md) reúne a sequência sugerida para a demonstração oral.
 
 ---
 
@@ -339,9 +273,7 @@ FATEC
 
 [Apresentação do projeto](APRESENTACAO.md)
 
-<br>
-
-`REACT`　•　`VOICE`　•　`AI`　•　`OPENROUTER`　•　`VERCEL`
+`REACT` • `VOICE` • `AI` • `OPENROUTER` • `VERCEL`
 
 **● SYSTEM STATUS: ONLINE**
 
