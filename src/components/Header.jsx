@@ -5,10 +5,10 @@ export default function Header() {
     <header className="site-header">
       <div>
         <strong>JARVIS</strong>
-        <span> Web Interface</span>
+        <span> Interface Web</span>
       </div>
       <nav className="nav-links">
-        <Link to="/">Home</Link>
+        <Link to="/">Início</Link>
         <Link to="/comandos">Comandos</Link>
         <Link to="/about">Sobre</Link>
       </nav>

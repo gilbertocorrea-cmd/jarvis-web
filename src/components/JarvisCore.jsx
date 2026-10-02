@@ -5,9 +5,9 @@ export default function JarvisCore({ status, defense = false }) {
     <div className={`core-display state-${status.toLowerCase()}${defense ? ' defense-active' : ''}`}>
       <div className="hologram-stage" aria-hidden="true">
         <div className="hud-side hud-left">
-          <span>NEURAL LINK</span><i /><i /><i />
+          <span>CONEXÃO NEURAL</span><i /><i /><i />
           <svg viewBox="0 0 80 30"><path d="M0 20H12L18 8 24 25 32 12 40 18H52L60 3 67 22H80" /></svg>
-          <span>SYS / 01</span>
+          <span>SIS / 01</span>
         </div>
         <div className="core-orbit">
           <div className="core-ring core-ring-outer" />
@@ -30,7 +30,7 @@ export default function JarvisCore({ status, defense = false }) {
           <div className="core-particles"><i /><i /><i /><i /><i /><i /></div>
         </div>
         <div className="hud-side hud-right">
-          <span>VOICE LINK</span>
+          <span>CONEXÃO DE VOZ</span>
           <div className="voice-bars">{[0,1,2,3,4,5,6].map((bar) => <i key={bar} style={{ animationDelay: `${bar * .1}s` }} />)}</div>
           <span>PT / BR</span><i /><i />
         </div>

@@ -46,8 +46,6 @@ export default function JarvisConsole({ showCommands = false }) {
     const synth = window.speechSynthesis;
     function carregarVozes() {
       voicesRef.current = (synth?.getVoices() || []).filter((voice) => voice.lang === 'pt-BR');
-      // Debug temporário: confiro somente as vozes brasileiras disponíveis.
-      console.log(voicesRef.current.map((voice) => ({ name: voice.name, lang: voice.lang })));
     }
     carregarVozes();
     synth?.addEventListener('voiceschanged', carregarVozes);
@@ -101,7 +99,7 @@ export default function JarvisConsole({ showCommands = false }) {
       shouldListenRef.current = false;
       setListening(false);
       setStatus('ONLINE');
-      setNotice('Não consegui iniciar o microfone. Clique em MIC OFF para tentar novamente.');
+      setNotice('Não consegui iniciar o microfone. Clique em MIC DESLIGADO para tentar novamente.');
     }
   }
 
@@ -255,7 +253,7 @@ export default function JarvisConsole({ showCommands = false }) {
       setNotice('Reconhecimento de voz não disponível neste navegador.');
       return;
     }
-    // Reutilizo a mesma instância: o modo contínuo só termina quando desligo o MIC.
+    // Reutilizo a mesma instância nas retomadas da escuta.
     if (!recognitionRef.current) {
       const recognition = new Recognition();
       recognition.lang = 'pt-BR';
@@ -297,7 +295,7 @@ export default function JarvisConsole({ showCommands = false }) {
           shouldListenRef.current = false;
           setListening(false);
           setStatus('ONLINE');
-          setNotice('O navegador encerrou o microfone várias vezes. Clique em MIC OFF para reconectar.');
+          setNotice('O navegador encerrou o microfone várias vezes. Clique em MIC DESLIGADO para reconectar.');
           return;
         }
         setStatus('ONLINE');
