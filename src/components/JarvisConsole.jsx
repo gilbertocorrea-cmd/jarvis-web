@@ -41,7 +41,9 @@ export default function JarvisConsole() {
   useEffect(() => {
     const synth = window.speechSynthesis;
     function carregarVozes() {
-      voicesRef.current = synth?.getVoices() || [];
+      voicesRef.current = (synth?.getVoices() || []).filter((voice) => voice.lang === 'pt-BR');
+      // Debug temporário: confiro somente as vozes brasileiras disponíveis.
+      console.log(voicesRef.current.map((voice) => ({ name: voice.name, lang: voice.lang })));
     }
     carregarVozes();
     synth?.addEventListener('voiceschanged', carregarVozes);
@@ -67,16 +69,15 @@ export default function JarvisConsole() {
 
   function getJarvisVoice() {
     const voices = window.speechSynthesis.getVoices();
-    const available = voices.length ? voices : voicesRef.current;
-    // O navegador não informa gênero. Procuro nomes conhecidos, sem confundir Female com Male.
-    const masculine = /\b(male|masculino|daniel|george|david|alex|antonio|antônio|ricardo|duarte|paulo|guy)\b/i;
-    for (const lang of ['pt-br', 'pt-pt', 'en-gb', 'en-us']) {
-      const voice = available.find((item) => item.lang.toLowerCase().replace('_', '-') === lang && masculine.test(item.name));
-      if (voice) return voice;
-    }
-    return available.find((item) => item.lang.toLowerCase().startsWith('pt') && /google|microsoft/i.test(item.name))
-      || available.find((item) => item.lang.toLowerCase().startsWith('pt'))
-      || available[0];
+    const ptBrVoices = (voices.length ? voices : voicesRef.current)
+      .filter((voice) => voice.lang === 'pt-BR');
+    if (ptBrVoices.length === 0) return null;
+    // Priorizo o idioma. O nome é apenas uma tentativa de identificar voz masculina.
+    const maleVoice = ptBrVoices.find((voice) => {
+      const name = voice.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return /\b(male|masculino|antonio|felipe|daniel|ricardo|marcelo|paulo|joao|jose)\b/i.test(name);
+    });
+    return maleVoice || ptBrVoices[0];
   }
 
   function retomarEscuta() {
@@ -110,17 +111,22 @@ export default function JarvisConsole() {
       setStatus('ONLINE');
       return;
     }
+    const voice = getJarvisVoice();
+    if (!voice) {
+      setNotice('Nenhuma voz pt-BR encontrada.');
+      setStatus('ONLINE');
+      return;
+    }
     // Pauso antes de falar e ignoro resultados atrasados para não responder à minha própria voz.
     speakingRef.current = true;
     clearTimeout(restartTimerRef.current);
     if (recognitionRunningRef.current) recognitionRef.current.abort();
     window.speechSynthesis.cancel();
     const fala = new window.SpeechSynthesisUtterance(texto);
-    const voice = getJarvisVoice();
-    if (voice) fala.voice = voice;
-    fala.lang = voice?.lang || 'pt-BR';
+    fala.voice = voice;
+    fala.lang = 'pt-BR';
     fala.rate = 0.9;
-    fala.pitch = 0.75;
+    fala.pitch = 0.7;
     fala.onstart = () => {
       setStatus('RESPONDENDO');
       if (recognitionRunningRef.current) recognitionRef.current.abort();

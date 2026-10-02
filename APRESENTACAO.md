@@ -15,7 +15,7 @@
 - Em `JarvisConsole`, guardo o texto, a resposta, o status e o histórico com `useState`.
 - Em `CommandInput`, recebo valores e funções do pai por props.
 - Em `JarvisCore`, desenho o rosto em SVG e recebo `status` para mudar anéis, brilho e animações.
-- Na voz, procuro nomes masculinos disponíveis e ajusto velocidade e tom. O resultado depende do sistema.
+- Na voz, seleciono somente pt-BR e depois procuro um nome masculino. Sem voz brasileira disponível, mantenho a resposta apenas na tela.
 - Em `HistoryList`, uso `.map()` para transformar cada registro em um bloco na tela.
 - Em `commands.js`, reúno as frases que reconheço localmente.
 - Em `api/chat.js`, mantenho a chave no servidor e envio somente a pergunta atual ao OpenRouter.

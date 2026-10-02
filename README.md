@@ -61,14 +61,15 @@ processo ou falo, não executo outra frase: aguardo o estado OUVINDO para contin
 ### Como escolho a voz
 
 Carrego as vozes com `getVoices()` e atualizo a lista pelo evento `voiceschanged`.
-Procuro nomes masculinos conhecidos nesta ordem: pt-BR, pt-PT, en-GB e en-US.
-Se não encontro, prefiro uma voz em português e depois qualquer voz disponível.
-Uso `rate = 0.9` e `pitch = 0.75` para uma leitura mais lenta e grave.
+Filtro exclusivamente `voice.lang === "pt-BR"`. Entre essas vozes, prefiro
+nomes masculinos conhecidos; se não encontro, uso a primeira voz brasileira.
+Nunca seleciono outro idioma. Se nenhuma voz pt-BR estiver disponível, mostro
+“Nenhuma voz pt-BR encontrada.” e mantenho a resposta na tela, sem leitura.
+Uso `lang = "pt-BR"`, `rate = 0.9` e `pitch = 0.7`.
 
-A API não informa gênero: essa seleção é uma tentativa pelos nomes, não uma
-certeza. “Microsoft” ou “Google português” sozinhos não identificam uma voz
-masculina. Não tento reproduzir a voz do personagem do filme. Uma voz em inglês
-pode pronunciar o português de forma diferente.
+A API não informa gênero: a preferência masculina é uma tentativa pelo nome.
+Mantenho temporariamente um `console.log` dos nomes e idiomas das vozes pt-BR
+no carregamento inicial e quando recebo o evento `voiceschanged`.
 
 ### Como desenho o núcleo
 
