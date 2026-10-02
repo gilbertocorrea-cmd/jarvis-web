@@ -195,7 +195,8 @@ button:focus-visible, a:focus-visible {
 }
 
 .core-orbit {
-  width: min(260px, 100%);
+  width: min(310px, 100%);
+  flex-shrink: 0;
   aspect-ratio: 1;
   position: relative;
   display: flex;
@@ -226,24 +227,9 @@ button:focus-visible, a:focus-visible {
 }
 
 .core-ring-inner {
-  inset: 24%;
+  inset: 20%;
   border-width: 2px;
   box-shadow: 0 0 32px #62e7ff44, inset 0 0 30px #62e7ff33;
-}
-
-.core-heart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 29%;
-  aspect-ratio: 1;
-  border: 1px solid var(--core-color);
-  border-radius: 50%;
-  color: #d6fbff;
-  font-size: 2.5rem;
-  text-shadow: 0 0 20px var(--core-color);
-  background: #103644;
-  animation: pulse 3s ease-in-out infinite;
 }
 
 .core-axis {
@@ -294,10 +280,6 @@ button:focus-visible, a:focus-visible {
 
 .state-respondendo {
   --core-color: #bbadff;
-}
-
-.state-respondendo .core-heart, .state-ouvindo .core-heart {
-  animation-duration: .8s;
 }
 
 .console-response {
@@ -533,6 +515,88 @@ button:focus-visible, a:focus-visible {
   }
 }
 
+
+/* Crio o holograma com SVG, anéis e pequenos indicadores decorativos. */
+.hologram-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
+  color: var(--core-color);
+  padding: 12px 0;
+}
+.hologram-face {
+  position: relative;
+  width: 57%;
+  height: 76%;
+  z-index: 2;
+  overflow: visible;
+  filter: drop-shadow(0 0 5px var(--core-color));
+}
+.face-mesh {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: .8;
+  color: var(--core-color);
+}
+.face-silhouette { fill: #0c36415c; stroke-width: 1.3; }
+.face-mesh circle { fill: var(--core-color); stroke: none; }
+.face-eyes { fill: var(--core-color); stroke-width: 1.5; }
+.face-contours { fill: none; stroke: var(--core-color); opacity: .3; stroke-dasharray: 2 3; }
+.face-neck { opacity: .6; }
+.hud-side {
+  flex: 1;
+  max-width: 76px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: .65;
+}
+.hud-side span { font-size: .5rem; letter-spacing: 1px; white-space: nowrap; }
+.hud-side > i { height: 3px; background: currentColor; opacity: .4; }
+.hud-side > i:nth-child(2) { width: 70%; }
+.hud-side > i:nth-child(3) { width: 45%; }
+.hud-side svg { fill: none; stroke: currentColor; stroke-width: 1; }
+.hud-right { text-align: right; }
+.scanner-line {
+  position: absolute;
+  left: 18%;
+  width: 64%;
+  height: 1px;
+  background: var(--core-color);
+  box-shadow: 0 0 15px 3px var(--core-color);
+  opacity: .35;
+  z-index: 3;
+  animation: scan 5s ease-in-out infinite;
+}
+.core-particles { position: absolute; inset: 0; pointer-events: none; }
+.core-particles i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--core-color); box-shadow: 0 0 8px var(--core-color); animation: particle-drift 5s ease-in-out infinite alternate; }
+.core-particles i:nth-child(1) { top: 20%; left: 18%; }
+.core-particles i:nth-child(2) { top: 70%; left: 9%; animation-delay: -2s; }
+.core-particles i:nth-child(3) { top: 43%; right: 12%; animation-delay: -1s; }
+.core-particles i:nth-child(4) { top: 85%; right: 28%; animation-delay: -3s; }
+.core-particles i:nth-child(5) { top: 9%; right: 30%; animation-delay: -4s; }
+.core-particles i:nth-child(6) { top: 62%; right: 25%; animation-delay: -2.5s; }
+.voice-bars { display: flex; gap: 3px; height: 35px; align-items: center; justify-content: flex-end; }
+.voice-bars i { width: 4px; height: 8px; background: currentColor; transform-origin: center; }
+.state-ouvindo .face-eyes, .state-ouvindo .core-ring-inner { animation: hologram-glow 1s ease-in-out infinite; }
+.state-respondendo .hologram-face { animation: hologram-glow .8s ease-in-out infinite; }
+.state-respondendo .voice-bars i { animation: voice-wave .7s ease-in-out infinite alternate; }
+.state-processando .core-ring-outer { animation-duration: 5s; }
+.state-processando .scanner-line { animation-duration: 1.2s; }
+.mic-button[aria-pressed=true] { box-shadow: 0 0 14px #84f6ba33; animation: mic-glow 2s ease-in-out infinite; }
+@keyframes scan { 0%, 100% { top: 18%; } 50% { top: 78%; } }
+@keyframes particle-drift { to { transform: translate(4px, -12px); opacity: .25; } }
+@keyframes hologram-glow { 50% { opacity: .55; filter: drop-shadow(0 0 8px var(--core-color)); } }
+@keyframes voice-wave { to { transform: scaleY(4); } }
+@keyframes mic-glow { 50% { box-shadow: 0 0 18px #84f6ba66; } }
+@media (max-width: 600px) {
+  .hud-side { display: none; }
+  .hologram-stage { gap: 0; }
+  .mic-button { white-space: nowrap; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;

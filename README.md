@@ -38,16 +38,45 @@ Reconheço `oi`, `olá`, `ajuda`, `hora`, `data`, `que horas são?`,
 `que dia é hoje?` e `limpar histórico`. Comparo frases completas para não tratar
 uma pergunta como “O que é banco de dados?” como um pedido de data.
 
-## Como uso a voz
+## Como uso a voz e o microfone contínuo
 
-Em `ouvir`, uso `window.SpeechRecognition || window.webkitSpeechRecognition`
-e configuro o idioma como `pt-BR`. No evento `onresult`, coloco o texto no campo
-e chamo a mesma função dos comandos digitados. Mostro uma mensagem quando o
-navegador não oferece reconhecimento ou quando a permissão é negada.
+Clico em **MIC OFF** para ligar. Uso `SpeechRecognition` ou
+`webkitSpeechRecognition`, com `continuous = true`, `interimResults = false`
+e idioma `pt-BR`. Recebo o último resultado final e envio a frase para
+`executarComando`, a mesma função do campo de texto.
 
-Para falar, crio `SpeechSynthesisUtterance`, configuro `pt-BR` e chamo
-`speechSynthesis.speak`. Cancelo a fala anterior antes de uma nova interação.
-Os estados visuais são ONLINE, OUVINDO, PROCESSANDO e RESPONDENDO.
+Guardo o modo ligado em `listening` e em `shouldListenRef`. O botão mostra
+**OUVINDO...** durante a escuta e **MIC ATIVO** durante as pausas. Ao clicar
+novamente, desligo o modo e cancelo qualquer reinício pendente.
+
+Se o navegador encerrar a sessão, aguardo meio segundo e retomo a escuta.
+Após quatro encerramentos seguidos sem uma frase, desligo o modo e mostro
+um aviso. Não tento reiniciar automaticamente após falhas de permissão ou rede.
+
+Antes de falar, pauso o reconhecimento com `abort()` e ignoro resultados
+atrasados. Ao terminar a fala, retomo somente se o MIC continuar ligado.
+Isso evita interpretar a própria resposta como um novo comando. Enquanto
+processo ou falo, não executo outra frase: aguardo o estado OUVINDO para continuar.
+
+### Como escolho a voz
+
+Carrego as vozes com `getVoices()` e atualizo a lista pelo evento `voiceschanged`.
+Procuro nomes masculinos conhecidos nesta ordem: pt-BR, pt-PT, en-GB e en-US.
+Se não encontro, prefiro uma voz em português e depois qualquer voz disponível.
+Uso `rate = 0.9` e `pitch = 0.75` para uma leitura mais lenta e grave.
+
+A API não informa gênero: essa seleção é uma tentativa pelos nomes, não uma
+certeza. “Microsoft” ou “Google português” sozinhos não identificam uma voz
+masculina. Não tento reproduzir a voz do personagem do filme. Uma voz em inglês
+pode pronunciar o português de forma diferente.
+
+### Como desenho o núcleo
+
+Em `JarvisCore`, desenho um rosto original com linhas e pontos em SVG.
+Uso CSS para anéis girando, scanner, partículas, olhos e indicadores laterais.
+O estado recebido por props controla cor, velocidade e brilho. As barras durante
+RESPONDENDO são uma animação ilustrativa ativa durante a fala, não uma medição
+do áudio. Respeito a preferência do navegador por movimento reduzido.
 
 Uso HTTPS na publicação ou localhost no desenvolvimento e permito o microfone.
 O suporte depende do navegador; o reconhecimento pode enviar áudio a um serviço

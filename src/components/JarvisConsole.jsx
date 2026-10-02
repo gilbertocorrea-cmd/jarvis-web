@@ -9,6 +9,7 @@ export default function JarvisConsole() {
   const [response, setResponse] = useState('Sistema online. Como posso ajudar?');
   const [status, setStatus] = useState('ONLINE');
   const [notice, setNotice] = useState('');
+  const [listening, setListening] = useState(false);
   const [history, setHistory] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('jarvis-history') || '[]');
@@ -22,6 +23,12 @@ export default function JarvisConsole() {
   const requestRef = useRef(null);
   const speechRef = useRef(null);
   const busyRef = useRef(false);
+  const shouldListenRef = useRef(false);
+  const recognitionRunningRef = useRef(false);
+  const speakingRef = useRef(false);
+  const restartTimerRef = useRef(null);
+  const restartCountRef = useRef(0);
+  const voicesRef = useRef([]);
 
   useEffect(() => {
     try {
@@ -31,23 +38,70 @@ export default function JarvisConsole() {
     }
   }, [history]);
 
-  useEffect(() => () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.onresult = null;
-      recognitionRef.current.onerror = null;
-      recognitionRef.current.onend = null;
-      recognitionRef.current.abort();
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+    function carregarVozes() {
+      voicesRef.current = synth?.getVoices() || [];
     }
-    requestRef.current?.abort();
-    if (speechRef.current) {
-      speechRef.current.onend = null;
-      speechRef.current.onerror = null;
-    }
-    window.speechSynthesis?.cancel();
+    carregarVozes();
+    synth?.addEventListener('voiceschanged', carregarVozes);
+    return () => {
+      shouldListenRef.current = false;
+      clearTimeout(restartTimerRef.current);
+      synth?.removeEventListener('voiceschanged', carregarVozes);
+      if (recognitionRef.current) {
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current.abort();
+      }
+      requestRef.current?.abort();
+      if (speechRef.current) {
+        speechRef.current.onstart = null;
+        speechRef.current.onend = null;
+        speechRef.current.onerror = null;
+      }
+      synth?.cancel();
+    };
   }, []);
+
+  function getJarvisVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const available = voices.length ? voices : voicesRef.current;
+    // O navegador não informa gênero. Procuro nomes conhecidos, sem confundir Female com Male.
+    const masculine = /\b(male|masculino|daniel|george|david|alex|antonio|antônio|ricardo|duarte|paulo|guy)\b/i;
+    for (const lang of ['pt-br', 'pt-pt', 'en-gb', 'en-us']) {
+      const voice = available.find((item) => item.lang.toLowerCase().replace('_', '-') === lang && masculine.test(item.name));
+      if (voice) return voice;
+    }
+    return available.find((item) => item.lang.toLowerCase().startsWith('pt') && /google|microsoft/i.test(item.name))
+      || available.find((item) => item.lang.toLowerCase().startsWith('pt'))
+      || available[0];
+  }
+
+  function retomarEscuta() {
+    clearTimeout(restartTimerRef.current);
+    if (!shouldListenRef.current || speakingRef.current || busyRef.current) return;
+    if (recognitionRunningRef.current) {
+      setStatus('OUVINDO');
+      return;
+    }
+    try {
+      recognitionRunningRef.current = true;
+      recognitionRef.current.start();
+      setStatus('OUVINDO');
+    } catch {
+      recognitionRunningRef.current = false;
+      shouldListenRef.current = false;
+      setListening(false);
+      setStatus('ONLINE');
+      setNotice('Não consegui iniciar o microfone. Clique em MIC OFF para tentar novamente.');
+    }
+  }
 
   function falar(texto) {
     if (speechRef.current) {
+      speechRef.current.onstart = null;
       speechRef.current.onend = null;
       speechRef.current.onerror = null;
     }
@@ -56,22 +110,42 @@ export default function JarvisConsole() {
       setStatus('ONLINE');
       return;
     }
+    // Pauso antes de falar e ignoro resultados atrasados para não responder à minha própria voz.
+    speakingRef.current = true;
+    clearTimeout(restartTimerRef.current);
+    if (recognitionRunningRef.current) recognitionRef.current.abort();
     window.speechSynthesis.cancel();
     const fala = new window.SpeechSynthesisUtterance(texto);
-    fala.lang = 'pt-BR';
-    fala.rate = 0.95;
-    fala.onend = () => setStatus('ONLINE');
+    const voice = getJarvisVoice();
+    if (voice) fala.voice = voice;
+    fala.lang = voice?.lang || 'pt-BR';
+    fala.rate = 0.9;
+    fala.pitch = 0.75;
+    fala.onstart = () => {
+      setStatus('RESPONDENDO');
+      if (recognitionRunningRef.current) recognitionRef.current.abort();
+    };
+    function terminarFala() {
+      speakingRef.current = false;
+      setStatus('ONLINE');
+      retomarEscuta();
+    }
+    fala.onend = terminarFala;
     fala.onerror = () => {
       setNotice('Não consegui falar a resposta. Ela continua disponível na tela.');
-      setStatus('ONLINE');
+      terminarFala();
     };
     speechRef.current = fala;
     setStatus('RESPONDENDO');
-    window.speechSynthesis.speak(fala);
+    try {
+      window.speechSynthesis.speak(fala);
+    } catch {
+      fala.onerror();
+    }
   }
 
   async function executarComando(rawCommand = command) {
-    if (busyRef.current) return;
+    if (busyRef.current || speakingRef.current) return;
     const texto = rawCommand.trim();
     if (!texto) {
       setResponse('Digite um comando antes de executar.');
@@ -137,12 +211,17 @@ export default function JarvisConsole() {
       setStatus('ONLINE');
     } finally {
       busyRef.current = false;
+      retomarEscuta();
     }
   }
 
   function ouvir() {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
+    if (shouldListenRef.current) {
+      shouldListenRef.current = false;
+      setListening(false);
+      clearTimeout(restartTimerRef.current);
+      if (recognitionRunningRef.current) recognitionRef.current.abort();
+      if (!speakingRef.current && !busyRef.current) setStatus('ONLINE');
       return;
     }
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -150,63 +229,70 @@ export default function JarvisConsole() {
       setNotice('Reconhecimento de voz não disponível neste navegador.');
       return;
     }
-    if (busyRef.current) return;
-    if (speechRef.current) {
-      speechRef.current.onend = null;
-      speechRef.current.onerror = null;
-    }
-    window.speechSynthesis?.cancel();
-    const recognition = new Recognition();
-    recognition.lang = 'pt-BR';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-    recognitionRef.current = recognition;
-    busyRef.current = true;
-    setNotice('');
-    setStatus('OUVINDO');
-    let recebeuResultado = false;
-    recognition.onresult = (event) => {
-      const texto = event.results[0][0].transcript.trim();
-      if (!texto) {
-        recognition.stop();
-        return;
-      }
-      recebeuResultado = true;
-      setCommand(texto);
-      busyRef.current = false;
-      recognition.stop();
-      executarComando(texto);
-    };
-    recognition.onerror = (event) => {
-      setNotice(event.error === 'not-allowed' || event.error === 'service-not-allowed'
-        ? 'Permita o acesso ao microfone para usar a voz.'
-        : event.error === 'no-speech' ? 'Não ouvi nenhuma fala. Tente novamente.' : 'Não consegui reconhecer a fala. Tente novamente ou digite.');
-    };
-    recognition.onend = () => {
-      recognitionRef.current = null;
-      if (!recebeuResultado) {
-        busyRef.current = false;
+    // Reutilizo a mesma instância: o modo contínuo só termina quando desligo o MIC.
+    if (!recognitionRef.current) {
+      const recognition = new Recognition();
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognitionRef.current = recognition;
+      recognition.onresult = (event) => {
+        if (!shouldListenRef.current || speakingRef.current || busyRef.current) return;
+        const index = event.results.length - 1;
+        const result = event.results[index];
+        if (index < event.resultIndex || !result.isFinal) return;
+        const texto = result[0].transcript.trim();
+        if (!texto) return;
+        restartCountRef.current = 0;
+        setCommand(texto);
+        executarComando(texto);
+      };
+      recognition.onerror = (event) => {
+        if (event.error === 'aborted') return;
+        if (event.error === 'no-speech') {
+          setNotice('Não ouvi nenhuma fala. Continuo aguardando seu comando.');
+          return;
+        }
+        // Não reinicio automaticamente após erro de permissão, rede ou dispositivo.
+        shouldListenRef.current = false;
+        setListening(false);
+        clearTimeout(restartTimerRef.current);
+        setNotice(event.error === 'not-allowed' || event.error === 'service-not-allowed'
+          ? 'Permita o acesso ao microfone para usar a voz.'
+          : 'O microfone foi desligado após uma falha. Tente novamente ou digite.');
+        if (!busyRef.current && !speakingRef.current) setStatus('ONLINE');
+      };
+      recognition.onend = () => {
+        recognitionRunningRef.current = false;
+        if (!shouldListenRef.current || speakingRef.current || busyRef.current) return;
+        // Limito encerramentos seguidos sem uma frase para evitar um ciclo de falhas.
+        restartCountRef.current += 1;
+        if (restartCountRef.current > 3) {
+          shouldListenRef.current = false;
+          setListening(false);
+          setStatus('ONLINE');
+          setNotice('O navegador encerrou o microfone várias vezes. Clique em MIC OFF para reconectar.');
+          return;
+        }
         setStatus('ONLINE');
-      }
-    };
-    try {
-      recognition.start();
-    } catch {
-      recognitionRef.current = null;
-      busyRef.current = false;
-      setStatus('ONLINE');
-      setNotice('Não consegui iniciar o microfone. Tente novamente.');
+        restartTimerRef.current = setTimeout(retomarEscuta, 500);
+      };
     }
+    shouldListenRef.current = true;
+    restartCountRef.current = 0;
+    setListening(true);
+    setNotice('');
+    retomarEscuta();
   }
 
-  const busy = status === 'PROCESSANDO' || status === 'OUVINDO';
+  const busy = status === 'PROCESSANDO' || status === 'RESPONDENDO';
   return (
     <div className="assistant-workspace">
       <section className="console-panel" aria-label="Console JARVIS">
         <div className="section-heading"><span className="eyebrow">INTERFACE NEURAL</span><span className="system-label">JARVIS / 01</span></div>
         <JarvisCore status={status} />
         <p className="console-response" aria-live="polite">{response}</p>
-        <CommandInput command={command} onChange={setCommand} onExecute={executarComando} onMicrophone={ouvir} busy={busy} listening={status === 'OUVINDO'} />
+        <CommandInput command={command} onChange={setCommand} onExecute={executarComando} onMicrophone={ouvir} busy={busy} listening={listening} status={status} />
         {notice && <p className="console-notice" role="status">{notice}</p>}
         <div className="quick-commands" aria-label="Comandos locais">
           {commands.map((item) => <button key={item.id} disabled={busy} onClick={() => executarComando(item.example)}>{item.example}</button>)}

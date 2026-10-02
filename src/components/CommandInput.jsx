@@ -1,4 +1,4 @@
-export default function CommandInput({ command, onChange, onExecute, onMicrophone, busy, listening }) {
+export default function CommandInput({ command, onChange, onExecute, onMicrophone, busy, listening, status }) {
   return (
     <div className="console-controls">
       <label className="command-field">
@@ -16,8 +16,8 @@ export default function CommandInput({ command, onChange, onExecute, onMicrophon
       </label>
       <div className="command-buttons">
         <button className="primary-button" onClick={() => onExecute()} disabled={busy}>Executar</button>
-        <button className="secondary-button mic-button" onClick={onMicrophone} disabled={busy && !listening} aria-pressed={listening}>
-          {listening ? 'Parar MIC' : 'MIC'}
+        <button className="secondary-button mic-button" onClick={onMicrophone} aria-label={listening ? 'Desligar microfone' : 'Ligar microfone'} aria-pressed={listening}>
+          {listening ? (status === 'OUVINDO' ? 'OUVINDO...' : 'MIC ATIVO') : 'MIC OFF'}
         </button>
       </div>
     </div>

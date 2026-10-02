@@ -2,8 +2,8 @@
 
 1. Abro a Home e apresento meu assistente em React com Vite.
 2. Digito “oi” e clico em Executar: mostro a resposta, o núcleo e o histórico.
-3. Uso MIC e pergunto a hora. Explico que transformo fala em texto e reutilizo a mesma função.
-4. Mostro que o navegador fala a resposta com speechSynthesis.
+3. Ligo o MIC, pergunto a hora e espero a resposta. Depois pergunto a data sem ligar o MIC novamente.
+4. Mostro a resposta falada e explico que pauso a escuta durante a fala para evitar eco. Desligo o MIC pelo mesmo botão.
 5. Se a chave estiver configurada, faço uma pergunta geral e explico o caminho `/api/chat` → OpenRouter.
 6. Recarrego a página para mostrar o histórico persistente e uso “limpar histórico”.
 7. Abro Comandos, favorito um card e mostro props, `.map()`, `key`, `useState` e `onClick`.
@@ -14,7 +14,8 @@
 
 - Em `JarvisConsole`, guardo o texto, a resposta, o status e o histórico com `useState`.
 - Em `CommandInput`, recebo valores e funções do pai por props.
-- Em `JarvisCore`, recebo `status` e aplico classes CSS que mudam o visual.
+- Em `JarvisCore`, desenho o rosto em SVG e recebo `status` para mudar anéis, brilho e animações.
+- Na voz, procuro nomes masculinos disponíveis e ajusto velocidade e tom. O resultado depende do sistema.
 - Em `HistoryList`, uso `.map()` para transformar cada registro em um bloco na tela.
 - Em `commands.js`, reúno as frases que reconheço localmente.
 - Em `api/chat.js`, mantenho a chave no servidor e envio somente a pergunta atual ao OpenRouter.
