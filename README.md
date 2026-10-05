@@ -16,7 +16,7 @@
 [![Vercel](https://img.shields.io/badge/VERCEL-ONLINE-111827?style=for-the-badge&logo=vercel&logoColor=white)](https://jarvis-7wktg97tp-gil-testa.vercel.app/)
 ![OpenRouter](https://img.shields.io/badge/AI-OPENROUTER-00BFFF?style=for-the-badge)
 
-### [ ◉ ACESSAR JARVIS ONLINE ](https://jarvis-7wktg97tp-gil-testa.vercel.app/)
+### [ ◉ ACESSAR JARVIS ONLINE ](https://jarvis-web-five-ashy.vercel.app/)
 
 </div>
 
